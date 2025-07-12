@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:siffrum_sa/screens/auth-screens/login.dart';
+import 'package:siffrum_sa/widgets/centered_scroll_view.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -8,9 +9,10 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(middle: Text("Home")),
-      child: Center(
+      child: CenteredScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("Welcome to Siffrum Home Page"),
             CupertinoButton(
