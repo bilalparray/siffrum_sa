@@ -76,6 +76,20 @@ class _LoginState extends State<Login> {
                         controller: _passwordController,
                         placeholder: "Enter Your Password",
                         padding: EdgeInsets.all(10),
+                        obscureText: _hidePassword,
+                        suffix: Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: Icon(
+                            _hidePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            _hidePassword = !_hidePassword;
+                          });
+                        },
                       ),
                       const SizedBox(height: 20),
                       CupertinoButton.filled(
