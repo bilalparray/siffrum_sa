@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:siffrum_sa/screens/auth-screens/login.dart';
-import 'package:siffrum_sa/widgets/centered_scroll_view.dart';
+import 'package:siffrum_sa/widgets/scroll_view.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});

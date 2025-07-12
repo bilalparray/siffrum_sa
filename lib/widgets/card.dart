@@ -33,15 +33,10 @@ class CupertinoCard extends StatelessWidget {
             boxShadow ??
             [
               BoxShadow(
-                color: Color.fromRGBO(
-                  100,
-                  100,
-                  111,
-                  0.2,
-                ), // rgba(100, 100, 111, 0.2)
-                offset: Offset(0, 7), // 0px 7px
-                blurRadius: 29, // 29px blur
-                spreadRadius: 0, // 0px spread
+                color: Color.fromRGBO(100, 100, 111, 0.2),
+                offset: Offset(0, 7),
+                blurRadius: 29,
+                spreadRadius: 0,
               ),
             ],
       ),

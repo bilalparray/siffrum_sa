@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:siffrum_sa/widgets/centered_scroll_view.dart';
-import 'package:siffrum_sa/widgets/credential_dialog.dart';
-import 'package:siffrum_sa/widgets/cupertino_card.dart';
+import 'package:siffrum_sa/widgets/scroll_view.dart';
+import 'package:siffrum_sa/widgets/dialog.dart';
+import 'package:siffrum_sa/widgets/card.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
