@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:siffrum_sa/screens/home.dart';
+import 'package:siffrum_sa/widgets/auth/auth_guard.dart';
 import 'package:siffrum_sa/widgets/scroll_view.dart';
 import 'package:siffrum_sa/widgets/dialog.dart';
 import 'package:siffrum_sa/widgets/card.dart';
@@ -99,6 +101,19 @@ class _LoginState extends State<Login> {
                         CupertinoButton.filled(
                           onPressed: submit,
                           child: Text('Submit'),
+                        ),
+
+                        CupertinoButton.filled(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) =>
+                                    const AuthGuard(child: Home()),
+                              ),
+                            );
+                          },
+                          child: Text('Home'),
                         ),
                       ],
                     ),

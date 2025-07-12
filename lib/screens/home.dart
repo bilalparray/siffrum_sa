@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:siffrum_sa/screens/auth-screens/login.dart';
+import 'package:siffrum_sa/screens/random_user.dart';
 import 'package:siffrum_sa/widgets/scroll_view.dart';
 
 class Home extends StatelessWidget {
@@ -21,6 +22,17 @@ class Home extends StatelessWidget {
                 Navigator.push(
                   context,
                   CupertinoPageRoute(builder: (context) => const Login()),
+                );
+              },
+            ),
+            CupertinoButton(
+              child: Text("Random User"),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => const RandomUserPage(),
+                  ),
                 );
               },
             ),
