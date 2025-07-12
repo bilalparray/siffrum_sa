@@ -11,9 +11,12 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  // variable for text field
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _hidePassword = true;
+  // vaiable for password hide
+  bool _makePasswordVisible = false;
+
   @override
   void dispose() {
     _userNameController.dispose();
@@ -85,18 +88,18 @@ class _LoginState extends State<Login> {
                             color: CupertinoColors.systemGrey,
                           ),
                           padding: EdgeInsets.all(10),
-                          obscureText: _hidePassword,
+                          obscureText: _makePasswordVisible,
                           suffix: Padding(
                             padding: EdgeInsets.only(right: 10),
                             child: Icon(
-                              _hidePassword
+                              _makePasswordVisible
                                   ? Icons.visibility_off
                                   : Icons.visibility,
                             ),
                           ),
                           onTap: () {
                             setState(() {
-                              _hidePassword = !_hidePassword;
+                              _makePasswordVisible = !_makePasswordVisible;
                             });
                           },
                         ),
