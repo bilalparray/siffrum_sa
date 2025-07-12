@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:siffrum_sa/widgets/centered_scroll_view.dart';
+import 'package:siffrum_sa/widgets/credential_dialog.dart';
 import 'package:siffrum_sa/widgets/cupertino_card.dart';
 
 class Login extends StatefulWidget {
@@ -15,7 +16,7 @@ class _LoginState extends State<Login> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   // vaiable for password hide
-  bool _makePasswordVisible = false;
+  bool _isPasswordHidden = true;
 
   @override
   void dispose() {
@@ -25,32 +26,21 @@ class _LoginState extends State<Login> {
   }
 
   void submit() {
-    final userName = _userNameController.text;
+    final userName = _userNameController.text.trim();
     final password = _passwordController.text;
 
     //remove this dialog when testing done
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text("Entered Credentials"),
-          content: Column(
-            children: [
-              SizedBox(height: 10),
-              Text("Username: $userName"),
-              SizedBox(height: 5),
-              Text("Password: $password"),
-            ],
-          ),
-          actions: [
-            CupertinoDialogAction(
-              child: Text("OK"),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-
-        //dialog to be romved when testing is done
+        bool isValidForm = userName.isNotEmpty && password.isNotEmpty;
+        if (isValidForm) {
+          return CupertinoDialog(
+            title: "Entered Credentials",
+            message: password + userName,
+          );
+        }
+        return CupertinoDialog(title: "Error", message: "Invalid Credentials");
       },
     );
   }
@@ -88,20 +78,22 @@ class _LoginState extends State<Login> {
                             color: CupertinoColors.systemGrey,
                           ),
                           padding: EdgeInsets.all(10),
-                          obscureText: _makePasswordVisible,
-                          suffix: Padding(
-                            padding: EdgeInsets.only(right: 10),
-                            child: Icon(
-                              _makePasswordVisible
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                          obscureText: !_isPasswordHidden,
+                          suffix: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isPasswordHidden = !_isPasswordHidden;
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: Icon(
+                                _isPasswordHidden
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
                             ),
                           ),
-                          onTap: () {
-                            setState(() {
-                              _makePasswordVisible = !_makePasswordVisible;
-                            });
-                          },
                         ),
                         const SizedBox(height: 20),
                         CupertinoButton.filled(
