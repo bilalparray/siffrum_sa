@@ -3,7 +3,7 @@ import 'package:siffrum_sa/constants/environment.dart';
 import '../models/api_response.dart';
 import '../models/error_data.dart';
 
-/// A centralized API client using Dio, returning ApiResponse<T> for all calls.
+/// A centralized API client using Dio, returning ApiResponse for all calls.
 class ApiClient {
   static final Dio _dio = Dio(
     BaseOptions(
@@ -126,7 +126,7 @@ class ApiClient {
     }
   }
 
-  /// Centralized DioError handler converting to ApiResponse<T> with ErrorData
+  /// Centralized DioError handler converting to ApiResponse with ErrorData
   static ApiResponse<T> _handleDioError<T>(DioException err) {
     final status = err.response?.statusCode ?? -1;
     ErrorData error;
