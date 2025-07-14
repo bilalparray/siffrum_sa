@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:siffrum_sa/screens/auth-screens/login.dart';
 import 'package:siffrum_sa/screens/random_user.dart';
+import 'package:siffrum_sa/services/auth/auth_service.dart';
 import 'package:siffrum_sa/widgets/scroll_view.dart';
 
 class Home extends StatelessWidget {
@@ -16,6 +17,16 @@ class Home extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("Welcome to Siffrum Home Page"),
+            CupertinoButton(
+              child: Text("logout"),
+              onPressed: () {
+                AuthService.instance.logout();
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(builder: (context) => const Login()),
+                );
+              },
+            ),
             CupertinoButton(
               child: Text("Login"),
               onPressed: () {

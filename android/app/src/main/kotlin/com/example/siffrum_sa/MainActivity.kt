@@ -1,4 +1,4 @@
-package com.example.siffrum_sa
+package com.siffrum.superadmin
 
 import io.flutter.embedding.android.FlutterActivity
 
