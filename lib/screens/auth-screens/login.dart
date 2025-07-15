@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:siffrum_sa/constants/environment.dart';
 import 'package:siffrum_sa/models/role.dart';
 import 'package:siffrum_sa/screens/home.dart';
 import 'package:siffrum_sa/services/auth/auth_service.dart';
+import 'package:siffrum_sa/utils/dialog_utils.dart';
+import 'package:siffrum_sa/utils/picker_utils.dart';
 import 'package:siffrum_sa/widgets/auth/auth_guard.dart';
 import 'package:siffrum_sa/widgets/scroll_view.dart';
 import 'package:siffrum_sa/widgets/card.dart';
@@ -21,10 +22,9 @@ class _LoginState extends State<Login> {
   final TextEditingController _passwordController = TextEditingController();
   final List<Role> _roles = [
     Role('superAdmin', 'Super Admin'),
-    Role('admin', 'Admin'),
-    Role('editor', 'Editor'),
-    Role('user', 'User'),
-    Role('guest', 'Guest'),
+    Role('vendor', 'Vendor'),
+    Role('endUser', 'End User'),
+    Role('cultureContributor', 'Culture Contributor'),
   ];
   // vaiable for password hide
   bool _isPasswordHidden = true;
@@ -42,17 +42,7 @@ class _LoginState extends State<Login> {
     final userName = _userNameController.text.trim();
     final password = _passwordController.text;
     if (userName.isNotEmpty && password.isNotEmpty) {
-      showCupertinoDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const CupertinoAlertDialog(
-          content: SizedBox(
-            height: 50,
-            child: Center(child: CupertinoActivityIndicator()),
-          ),
-        ),
-      );
-
+      showLoadingIndicator(context);
       try {
         await AuthService.instance.login(
           username: userName,
@@ -61,7 +51,7 @@ class _LoginState extends State<Login> {
         );
 
         if (mounted) {
-          Navigator.of(context).pop(); // Close the loader
+          hideLoadingIndicator(context);
           Navigator.of(context).pushAndRemoveUntil(
             CupertinoPageRoute(builder: (_) => const AuthGuard(child: Home())),
             (route) => false,
@@ -70,72 +60,22 @@ class _LoginState extends State<Login> {
       } catch (error) {
         if (mounted) {
           Navigator.of(context).pop(); // Close the loader
-          showCupertinoDialog(
-            context: context,
-            builder: (_) => CupertinoAlertDialog(
-              title: const Text('Error'),
-              content: Text(Environment.errorMessages['user_not_found']!),
-              actions: [
-                CupertinoDialogAction(
-                  isDefaultAction: true,
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
+          showErrorDialog(context, error.toString());
         }
       }
     }
   }
 
   void _showRolePicker() {
-    showCupertinoModalPopup(
+    showRolePicker(
       context: context,
-      builder: (_) => Container(
-        height: 300,
-        color: CupertinoColors.systemBackground.resolveFrom(context),
-        child: Column(
-          children: [
-            // Done button
-            SizedBox(
-              height: 40,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CupertinoButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('Done'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-            ),
-            // Picker wheel
-            Expanded(
-              child: CupertinoPicker(
-                itemExtent: 32,
-                backgroundColor: CupertinoColors.systemBackground.resolveFrom(
-                  context,
-                ),
-                scrollController: FixedExtentScrollController(
-                  initialItem: _roles.indexWhere(
-                    (r) => r.value == _selectedValue,
-                  ),
-                ),
-                onSelectedItemChanged: (index) {
-                  setState(() {
-                    _selectedValue = _roles[index].value;
-                  });
-                },
-                children: _roles
-                    .map((r) => Center(child: Text(r.label)))
-                    .toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
+      roles: _roles,
+      selectedValue: _selectedValue,
+      onSelected: (value) {
+        setState(() {
+          _selectedValue = value;
+        });
+      },
     );
   }
 
@@ -205,15 +145,21 @@ class _LoginState extends State<Login> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Role', style: TextStyle(fontSize: 16)),
+                                const Text(
+                                  'Role',
+                                  style: TextStyle(fontSize: 16),
+                                ),
                                 Row(
                                   children: [
                                     Text(
                                       _selectedLabel,
                                       style: TextStyle(fontSize: 16),
                                     ),
-                                    SizedBox(width: 4),
-                                    Icon(CupertinoIcons.chevron_down, size: 20),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      CupertinoIcons.chevron_down,
+                                      size: 20,
+                                    ),
                                   ],
                                 ),
                               ],

@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:siffrum_sa/constants/environment.dart';
+import 'package:siffrum_sa/models/error_data.dart';
 
 class AuthService {
   AuthService._privateConstructor();
@@ -54,25 +57,39 @@ class AuthService {
       final response = await dio.post(
         fullUrl,
         data: body,
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          // Allow all status codes through so we can parse error bodies ourselves
+          validateStatus: (_) => true,
+        ),
       );
 
+      // Normalize response.data to a Map<String, dynamic>
+      final Map<String, dynamic> data = response.data is String
+          ? json.decode(response.data as String) as Map<String, dynamic>
+          : response.data as Map<String, dynamic>;
+
       if (response.statusCode == 200) {
-        final successData = response.data['successData'];
-        if (successData != null) {
-          _token = successData['accessToken'] as String;
-          await _storage.write(key: _tokenKey, value: _token);
+        // 200 OK ⇒ expect successData
+        final successData = data['successData'];
+        if (successData != null && successData is Map<String, dynamic>) {
+          final token = successData['accessToken'] as String;
+          await _storage.write(key: _tokenKey, value: token);
         } else {
-          final message = response.data['message'] ?? 'Invalid credentials';
+          // 200 but no token ⇒ treat as backend‑defined “invalid credentials”
+          final message = data['message'] as String? ?? 'Invalid credentials';
           throw Exception(message);
         }
       } else {
-        throw Exception('Server error: ${response.statusCode}');
+        // non-200 ⇒ parse the ApiError model
+        final apiError = ApiError.fromJson(data);
+        throw Exception(
+          apiError.errorData?.displayMessage ?? 'Unknown API error',
+        );
       }
     } on DioException catch (e) {
+      // Network / transport errors
       throw Exception('Network error: ${e.message}');
-    } catch (e) {
-      rethrow;
     }
   }
 
