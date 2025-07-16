@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:siffrum_sa/models/role.dart';
-import 'package:siffrum_sa/screens/home.dart';
+import 'package:siffrum_sa/screens/dashboard.dart';
 import 'package:siffrum_sa/services/auth/auth_service.dart';
 import 'package:siffrum_sa/utils/dialog_utils.dart';
 import 'package:siffrum_sa/utils/picker_utils.dart';
@@ -53,7 +53,9 @@ class _LoginState extends State<Login> {
         if (mounted) {
           hideLoadingIndicator(context);
           Navigator.of(context).pushAndRemoveUntil(
-            CupertinoPageRoute(builder: (_) => const AuthGuard(child: Home())),
+            CupertinoPageRoute(
+              builder: (_) => AuthGuard(child: SuperAdminDashboard()),
+            ),
             (route) => false,
           );
         }
@@ -88,7 +90,7 @@ class _LoginState extends State<Login> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Welcome to Siffrum Login Page"),
+              const Text("Welcome to Siffrum Login Page"),
               Padding(
                 padding: EdgeInsets.all(20),
                 child: CupertinoCard(

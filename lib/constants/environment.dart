@@ -1,6 +1,6 @@
 class Environment {
   static const String baseUrl =
-      'https://aesthetic-jenelle-siffrumm-480ea779.koyeb.app';
+      'https://compulsory-brittne-siffrumm-ff72b09f.koyeb.app'; //no trailing slash please
   static const connectTimeout = 5000;
   static const receiveTimeout = 3000;
 
