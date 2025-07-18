@@ -1,6 +1,9 @@
 // home_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:siffrum_sa/screens/auth-screens/login.dart';
+import 'package:siffrum_sa/screens/banner_list.dart';
+import 'package:siffrum_sa/services/auth/auth_service.dart';
 import 'package:siffrum_sa/widgets/card.dart';
 
 class SuperAdminDashboard extends StatelessWidget {
@@ -50,6 +53,19 @@ class SuperAdminDashboard extends StatelessWidget {
                 _buildStatsGrid(context),
                 const SizedBox(height: 32),
                 _buildRecentActivity(),
+                const SizedBox(height: 32),
+                //button to logout
+                CupertinoButton.filled(
+                  child: const Text('Logout'),
+                  onPressed: () {
+                    AuthService.instance.logout().then((_) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        CupertinoPageRoute(builder: (_) => Login()),
+                        (route) => false,
+                      );
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -106,53 +122,61 @@ class SuperAdminDashboard extends StatelessWidget {
       itemCount: _stats.length,
       itemBuilder: (context, index) {
         final stat = _stats[index];
-        return CupertinoCard(
-          margin: EdgeInsets.zero,
-          child: Padding(
-            padding: const EdgeInsets.all(1),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  stat['title'] as String,
-                  style: TextStyle(
-                    color: CupertinoColors.systemGrey,
-                    fontSize: 14,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  stat['value'] as String,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(
-                      stat['change'].toString().contains('+')
-                          ? CupertinoIcons.arrow_up_right
-                          : CupertinoIcons.arrow_down_right,
-                      size: 14,
-                      color: stat['change'].toString().contains('+')
-                          ? CupertinoColors.systemGreen
-                          : CupertinoColors.systemRed,
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              CupertinoPageRoute(builder: (_) => BannerListScreen()),
+              (route) => false,
+            );
+          },
+          child: CupertinoCard(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.all(1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    stat['title'] as String,
+                    style: TextStyle(
+                      color: CupertinoColors.systemGrey,
+                      fontSize: 14,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      stat['change'] as String,
-                      style: TextStyle(
+                  ),
+                  const Spacer(),
+                  Text(
+                    stat['value'] as String,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(
+                        stat['change'].toString().contains('+')
+                            ? CupertinoIcons.arrow_up_right
+                            : CupertinoIcons.arrow_down_right,
+                        size: 14,
                         color: stat['change'].toString().contains('+')
                             ? CupertinoColors.systemGreen
                             : CupertinoColors.systemRed,
-                        fontSize: 14,
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 4),
+                      Text(
+                        stat['change'] as String,
+                        style: TextStyle(
+                          color: stat['change'].toString().contains('+')
+                              ? CupertinoColors.systemGreen
+                              : CupertinoColors.systemRed,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

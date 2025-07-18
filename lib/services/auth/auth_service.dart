@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:siffrum_sa/constants/environment.dart';
@@ -10,12 +9,17 @@ class AuthService {
   static final AuthService instance = AuthService._privateConstructor();
 
   static const _tokenKey = 'auth_token';
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  String? _token;
+  static const _refreshTokenKey = 'refresh_token';
 
-  /// Initialize by loading token from storage.
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  String? _token;
+  String? _refreshToken;
+
+  /// Initialize by loading token & refresh token from storage.
   Future<void> init() async {
     _token = await _storage.read(key: _tokenKey);
+    _refreshToken = await _storage.read(key: _refreshTokenKey);
   }
 
   /// Check login status
@@ -33,7 +37,6 @@ class AuthService {
       handler.next(options);
     },
     onError: (err, handler) async {
-      // Optional: handle token expiry (401)
       if (err.response?.statusCode == 401) {
         await logout();
       }
@@ -41,7 +44,7 @@ class AuthService {
     },
   );
 
-  /// Perform login and store token
+  /// Perform login and store token + refresh token
   Future<void> login({
     required String username,
     required String password,
@@ -59,43 +62,95 @@ class AuthService {
         data: body,
         options: Options(
           headers: {'Content-Type': 'application/json'},
-          // Allow all status codes through so we can parse error bodies ourselves
           validateStatus: (_) => true,
         ),
       );
 
-      // Normalize response.data to a Map<String, dynamic>
       final Map<String, dynamic> data = response.data is String
           ? json.decode(response.data as String) as Map<String, dynamic>
           : response.data as Map<String, dynamic>;
 
       if (response.statusCode == 200) {
-        // 200 OK ⇒ expect successData
         final successData = data['successData'];
         if (successData != null && successData is Map<String, dynamic>) {
           final token = successData['accessToken'] as String;
+          final refreshToken = successData['refreshToken'] as String?;
           await _storage.write(key: _tokenKey, value: token);
+          if (refreshToken != null) {
+            await _storage.write(key: _refreshTokenKey, value: refreshToken);
+          }
+          _token = token;
+          _refreshToken = refreshToken;
         } else {
-          // 200 but no token ⇒ treat as backend‑defined “invalid credentials”
           final message = data['message'] as String? ?? 'Invalid credentials';
           throw Exception(message);
         }
       } else {
-        // non-200 ⇒ parse the ApiError model
         final apiError = ApiError.fromJson(data);
         throw Exception(
           apiError.errorData?.displayMessage ?? 'Unknown API error',
         );
       }
     } on DioException catch (e) {
-      // Network / transport errors
       throw Exception('Network error: ${e.message}');
+    }
+  }
+
+  /// Get the current token
+  String? getToken() => _token;
+
+  /// Refresh token logic
+  Future<String?> refreshToken() async {
+    if (_refreshToken == null) {
+      return null;
+    }
+
+    final dio = Dio();
+    final refreshUrl =
+        Environment.baseUrl + Environment.apiEndPoints['refreshToken']!;
+
+    try {
+      final response = await dio.post(
+        refreshUrl,
+        data: {'refreshToken': _refreshToken},
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          validateStatus: (_) => true,
+        ),
+      );
+
+      final Map<String, dynamic> data = response.data is String
+          ? json.decode(response.data as String) as Map<String, dynamic>
+          : response.data as Map<String, dynamic>;
+
+      if (response.statusCode == 200) {
+        final successData = data['successData'];
+        if (successData != null && successData is Map<String, dynamic>) {
+          final newToken = successData['accessToken'] as String;
+          final newRefreshToken = successData['refreshToken'] as String?;
+          await _storage.write(key: _tokenKey, value: newToken);
+          if (newRefreshToken != null) {
+            await _storage.write(key: _refreshTokenKey, value: newRefreshToken);
+          }
+          _token = newToken;
+          _refreshToken = newRefreshToken;
+          return newToken;
+        }
+      }
+
+      await logout();
+      return null;
+    } on DioException catch (e) {
+      await logout();
+      return null;
     }
   }
 
   /// Clear token and logout
   Future<void> logout() async {
     _token = null;
+    _refreshToken = null;
     await _storage.delete(key: _tokenKey);
+    await _storage.delete(key: _refreshTokenKey);
   }
 }
