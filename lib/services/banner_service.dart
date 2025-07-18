@@ -7,9 +7,7 @@ class BannerService {
   // Use endpoint from Environment
   final String _endpoint = Environment.apiEndPoints['banner']!;
 
-  BannerService(this._dio) {
-    print('✅ BannerService created with endpoint: $_endpoint');
-  }
+  BannerService(this._dio);
 
   /// Fetch all banners
   Future<List<BannerModel>> fetchBanners() async {
@@ -60,7 +58,6 @@ class BannerService {
 
   Future<void> deleteBanner(int id) async {
     final url = '$_endpoint/delete/$id';
-    print('🗑️ DELETE URL: $url');
     await _dio.delete(url);
   }
 }

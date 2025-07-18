@@ -124,9 +124,9 @@ class SuperAdminDashboard extends StatelessWidget {
         final stat = _stats[index];
         return GestureDetector(
           onTap: () {
-            Navigator.of(context).pushAndRemoveUntil(
+            Navigator.push<bool>(
+              context,
               CupertinoPageRoute(builder: (_) => BannerListScreen()),
-              (route) => false,
             );
           },
           child: CupertinoCard(
@@ -193,51 +193,49 @@ class SuperAdminDashboard extends StatelessWidget {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        ..._recentActivities
-            .map(
-              (activity) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: CupertinoColors.activeBlue,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            activity['user'] as String,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            activity['action'] as String,
-                            style: TextStyle(
-                              color: CupertinoColors.systemGrey,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      activity['time'] as String,
-                      style: TextStyle(
-                        color: CupertinoColors.systemGrey2,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+        ..._recentActivities.map(
+          (activity) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: CupertinoColors.activeBlue,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
-              ),
-            )
-            .toList(),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        activity['user'] as String,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        activity['action'] as String,
+                        style: TextStyle(
+                          color: CupertinoColors.systemGrey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Text(
+                  activity['time'] as String,
+                  style: TextStyle(
+                    color: CupertinoColors.systemGrey2,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

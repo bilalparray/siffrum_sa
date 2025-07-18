@@ -26,10 +26,6 @@ class _BannerListScreenState extends State<BannerListScreen> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        leading: CupertinoNavigationBarBackButton(
-          // go back to previous screen
-          onPressed: () => Navigator.pop(context),
-        ),
         middle: Text('Banners'),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
