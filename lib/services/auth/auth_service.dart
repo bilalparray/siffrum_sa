@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:siffrum_sa/constants/environment.dart';
 import 'package:siffrum_sa/models/error_data.dart';
+import 'package:siffrum_sa/main.dart';
+import 'package:siffrum_sa/navigation/navigarion.dart';
 
 class AuthService {
   AuthService._privateConstructor();
@@ -152,5 +154,9 @@ class AuthService {
     _refreshToken = null;
     await _storage.delete(key: _tokenKey);
     await _storage.delete(key: _refreshTokenKey);
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      '/login',
+      (route) => false,
+    );
   }
 }

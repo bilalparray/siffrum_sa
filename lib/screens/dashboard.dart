@@ -1,7 +1,6 @@
 // home_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:siffrum_sa/screens/auth-screens/login.dart';
 import 'package:siffrum_sa/screens/banner_list.dart';
 import 'package:siffrum_sa/services/auth/auth_service.dart';
 import 'package:siffrum_sa/widgets/card.dart';
@@ -17,7 +16,7 @@ class SuperAdminDashboard extends StatelessWidget {
   };
 
   final List<Map<String, dynamic>> _stats = [
-    {'title': 'Total Users', 'value': '2,458', 'change': '+12%'},
+    {'title': 'Banners', 'value': '2,458', 'change': '+12%'},
     {'title': 'Active Sessions', 'value': '1,230', 'change': '+3.2%'},
     {'title': 'Revenue', 'value': '\$18,230', 'change': '-1.1%'},
     {'title': 'Pending Tasks', 'value': '18', 'change': '+4'},
@@ -58,12 +57,7 @@ class SuperAdminDashboard extends StatelessWidget {
                 CupertinoButton.filled(
                   child: const Text('Logout'),
                   onPressed: () {
-                    AuthService.instance.logout().then((_) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        CupertinoPageRoute(builder: (_) => Login()),
-                        (route) => false,
-                      );
-                    });
+                    AuthService.instance.logout();
                   },
                 ),
               ],

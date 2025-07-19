@@ -44,6 +44,7 @@ class ApiClient {
               }
             } else {
               await AuthService.instance.logout();
+
               return handler.next(err);
             }
           } else if (statusCode == 403) {

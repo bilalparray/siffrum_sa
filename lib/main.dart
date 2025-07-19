@@ -2,6 +2,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
+import 'package:siffrum_sa/navigation/navigarion.dart';
 import 'clients/api_client.dart';
 import 'services/auth/auth_service.dart';
 import 'services/banner_service.dart';
@@ -18,7 +19,6 @@ void main() async {
   await AuthService.instance.init();
   ApiClient.initialize();
   final Dio dio = ApiClient.client;
-
   runApp(
     MultiProvider(
       providers: [
@@ -35,6 +35,13 @@ void main() async {
         dark: darkCupertinoTheme,
         initial: savedMode ?? AdaptiveThemeMode.light,
         builder: (theme) => CupertinoApp(
+          navigatorKey: navigatorKey,
+          initialRoute: '/login',
+          routes: {
+            '/login': (_) => Login(),
+            '/home': (_) => SuperAdminDashboard(),
+            // …other routes
+          },
           theme: theme,
           home: AuthService.instance.isLoggedIn
               ? SuperAdminDashboard()
